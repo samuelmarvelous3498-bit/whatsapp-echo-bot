@@ -7,19 +7,20 @@ How it works:
 2. We read the message text out of the webhook payload.
 3. We call Evolution API's REST endpoint to send a reply back.
 
-Fill in EVOLUTION_API_URL, API_KEY, and INSTANCE_NAME below.
+Config values come from environment variables set on Railway.
 """
 
+import os
 from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
 
-# ---- CONFIG: fill these in ----
-EVOLUTION_API_URL = "https://your-evolution-instance.up.railway.app"
-API_KEY = "your-authentication-api-key"   # the AUTHENTICATION_API_KEY you set on Railway
-INSTANCE_NAME = "main"                     # the instance name you created in the Manager
-# --------------------------------
+# ---- CONFIG: loaded from Railway environment variables ----
+EVOLUTION_API_URL = os.environ.get("EVOLUTION_API_URL")
+API_KEY = os.environ.get("API_KEY")
+INSTANCE_NAME = os.environ.get("INSTANCE_NAME")
+# -------------------------------------------------------------
 
 
 def send_message(to_number: str, text: str):
@@ -72,4 +73,5 @@ def health():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
